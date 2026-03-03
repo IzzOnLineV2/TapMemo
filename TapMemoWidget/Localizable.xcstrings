@@ -1,0 +1,66 @@
+{
+  "sourceLanguage" : "it",
+  "strings" : {
+    "Nessun memo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No memos"
+          }
+        }
+      }
+    },
+    "Nessun memo ancora" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No memos yet"
+          }
+        }
+      }
+    },
+    "Recenti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recent"
+          }
+        }
+      }
+    },
+    "Registra" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Record"
+          }
+        }
+      }
+    },
+    "TapMemo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TapMemo"
+          }
+        }
+      }
+    },
+    "Visualizza i tuoi memo recenti e registra rapidamente nuovi promemoria vocali." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View your recent memos and quickly record new voice reminders."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

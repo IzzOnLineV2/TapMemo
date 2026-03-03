@@ -41,40 +41,45 @@ struct TapMemoWidgetProvider: TimelineProvider {
     
     private func fetchMemos() -> [MemoItem] {
         let appGroupID = "group.com.smartapibox.tapmemo"
-        
-        // Usa lo stesso App Group del main app
+
         guard let groupURL = FileManager.default.containerURL(
             forSecurityApplicationGroupIdentifier: appGroupID
         ) else {
             print("⚠️ Widget: App Group '\(appGroupID)' non trovato!")
             return []
         }
-        
+
         let storeURL = groupURL.appendingPathComponent("TapMemo.sqlite")
-        let config = ModelConfiguration(url: storeURL)
-        
-        guard let container = try? ModelContainer(for: MemoItem.self, configurations: config) else {
-            print("⚠️ Widget: Failed to create ModelContainer")
+
+        // Se il database non esiste ancora, l'app non è stata aperta
+        guard FileManager.default.fileExists(atPath: storeURL.path) else {
+            print("⚠️ Widget: Database non ancora creato, apri TapMemo prima")
             return []
         }
-        
+
+        let config = ModelConfiguration(url: storeURL)
+
+        let container: ModelContainer
+        do {
+            container = try ModelContainer(for: MemoItem.self, configurations: config)
+        } catch {
+            print("⚠️ Widget: ModelContainer error: \(error)")
+            return []
+        }
+
         let descriptor = FetchDescriptor<MemoItem>(
             sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
         )
-        
-        // Usa ModelContext in modo sicuro
-        let fetchResult: [MemoItem]? = {
+
+        do {
             let context = ModelContext(container)
-            return try? context.fetch(descriptor)
-        }()
-        
-        guard let memos = fetchResult else {
-            print("⚠️ Widget: Failed to fetch memos")
+            let memos = try context.fetch(descriptor)
+            print("✅ Widget: Caricati \(memos.count) memo")
+            return Array(memos.prefix(5))
+        } catch {
+            print("⚠️ Widget: Fetch error: \(error)")
             return []
         }
-        
-        print("✅ Widget: Caricati \(memos.count) memo dal database condiviso")
-        return Array(memos.prefix(5))
     }
     
     private func sampleMemos() -> [MemoItem] {

@@ -1,0 +1,204 @@
+{
+  "sourceLanguage" : "it",
+  "strings" : {
+    "✅ Aggiunto a Promemoria" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "✅ Added to Reminders"
+          }
+        }
+      }
+    },
+    "✅ Aggiunto al Calendario" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "✅ Added to Calendar"
+          }
+        }
+      }
+    },
+    "✅ Condiviso" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "✅ Shared"
+          }
+        }
+      }
+    },
+    "🎤 \"%@\"" : {
+
+    },
+    "Calendario" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendar"
+          }
+        }
+      }
+    },
+    "Condividi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share"
+          }
+        }
+      }
+    },
+    "Elimina" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete"
+          }
+        }
+      }
+    },
+    "Errore" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error"
+          }
+        }
+      }
+    },
+    "EVENT" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EVENT"
+          }
+        }
+      }
+    },
+    "In Calendario" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Calendar"
+          }
+        }
+      }
+    },
+    "In Promemoria" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Reminders"
+          }
+        }
+      }
+    },
+    "Nessun memo" : {
+
+    },
+    "Nessun memo ancora" : {
+
+    },
+    "NOTE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NOTE"
+          }
+        }
+      }
+    },
+    "OK" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
+    },
+    "Promemoria" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reminders"
+          }
+        }
+      }
+    },
+    "Recenti" : {
+
+    },
+    "Registra" : {
+
+    },
+    "REMINDER" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "REMINDER"
+          }
+        }
+      }
+    },
+    "Solo in TapMemo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only in TapMemo"
+          }
+        }
+      }
+    },
+    "Sto ascoltando..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listening..."
+          }
+        }
+      }
+    },
+    "Tap per registrare" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap to record"
+          }
+        }
+      }
+    },
+    "TapMemo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TapMemo"
+          }
+        }
+      }
+    },
+    "Visualizza i tuoi memo recenti e registra rapidamente nuovi promemoria vocali." : {
+
+    }
+  },
+  "version" : "1.0"
+}

@@ -27,7 +27,7 @@ struct TapMemoApp: App {
                 print("✅ Database condiviso: \(storeURL.path)")
                 return container
             } catch {
-                print("⚠️ Failed to create shared container: \(error)")
+                print("⚠️ Schema incompatibile: \(error)")
             }
         } else {
             print("⚠️ App Group '\(appGroupID)' non trovato!")

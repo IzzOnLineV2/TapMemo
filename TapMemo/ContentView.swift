@@ -45,9 +45,15 @@ struct ContentView: View {
                     }
                     .buttonStyle(.plain)
                     
-                    Text(voiceManager.isRecording ? "Sto ascoltando..." : "Tap per registrare")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                    Group {
+                        if voiceManager.isRecording {
+                            Text("Sto ascoltando...")
+                        } else {
+                            Text("Tap per registrare")
+                        }
+                    }
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
                     
                     if memoService.isProcessing {
                         ProgressView()
@@ -84,7 +90,7 @@ struct ContentView: View {
                                         Task {
                                             await memoService.saveAsReminder(memo)
                                             if memoService.lastError == nil {
-                                                showFeedback("✅ Aggiunto a Promemoria")
+                                                showFeedback(String(localized: "✅ Aggiunto a Promemoria"))
                                             }
                                         }
                                     } label: {
@@ -191,7 +197,7 @@ struct ContentView: View {
         await memoService.saveAsCalendarEvent(memo, date: dueDate)
         
         if memoService.lastError == nil {
-            showFeedback("✅ Aggiunto al Calendario")
+            showFeedback(String(localized: "✅ Aggiunto al Calendario"))
         }
     }
     
@@ -215,7 +221,7 @@ struct ContentView: View {
             if completed {
                 memo.isShared = true
                 Haptics.success()
-                showFeedback("✅ Condiviso")
+                showFeedback(String(localized: "✅ Condiviso"))
             }
         }
         
@@ -309,10 +315,10 @@ struct MemoRow: View {
 // MARK: - Helper Views
 
 private struct BadgeLabel: View {
-    let text: String
+    let text: LocalizedStringKey
     let color: Color
 
-    init(_ text: String, color: Color) {
+    init(_ text: LocalizedStringKey, color: Color) {
         self.text = text
         self.color = color
     }
@@ -331,7 +337,7 @@ private struct BadgeLabel: View {
 
 private struct StatusLabel: View {
     let icon: String
-    let text: String
+    let text: LocalizedStringKey
     let color: Color
 
     var body: some View {

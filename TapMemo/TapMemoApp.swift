@@ -10,23 +10,43 @@ import SwiftData
 
 @main
 struct TapMemoApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
+    // ModelContainer con App Group per condivisione con widget
+    static let sharedModelContainer: ModelContainer = {
+        let appGroupID = "group.com.smartapibox.tapmemo"
+        
+        // Prova ad usare App Group per condivisione con widget
+        if let groupURL = FileManager.default.containerURL(
+            forSecurityApplicationGroupIdentifier: appGroupID
+        ) {
+            let storeURL = groupURL.appendingPathComponent("TapMemo.sqlite")
+            let config = ModelConfiguration(url: storeURL)
+            
+            do {
+                let container = try ModelContainer(for: MemoItem.self, configurations: config)
+                print("✅ App Group configurato correttamente!")
+                print("✅ Database condiviso: \(storeURL.path)")
+                return container
+            } catch {
+                print("⚠️ Failed to create shared container: \(error)")
+            }
+        } else {
+            print("⚠️ App Group '\(appGroupID)' non trovato!")
+            print("⚠️ Verifica Signing & Capabilities → App Groups")
+        }
+        
+        // Fallback: usa container di default (senza widget sharing)
+        print("⚠️ Usando container locale (widget non vedrà i dati)")
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            return try ModelContainer(for: MemoItem.self)
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            fatalError("Failed to create ModelContainer: \(error)")
         }
     }()
-
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(sharedModelContainer)
+        .modelContainer(Self.sharedModelContainer)
     }
 }

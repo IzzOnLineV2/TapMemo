@@ -407,7 +407,7 @@
 				CODE_SIGN_ENTITLEMENTS = TapMemoWidgetExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = 32BK2Y9JL3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TapMemoWidget/Info.plist;
@@ -440,7 +440,7 @@
 				CODE_SIGN_ENTITLEMENTS = TapMemoWidgetExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = 32BK2Y9JL3;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TapMemoWidget/Info.plist;

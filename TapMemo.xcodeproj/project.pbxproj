@@ -592,7 +592,7 @@
 		9E453BC42F56D52000100BB9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = TapMemo;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = TapMemo/TapMemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -633,7 +633,7 @@
 		9E453BC52F56D52000100BB9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = TapMemo;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = TapMemo/TapMemo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";

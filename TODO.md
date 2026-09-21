@@ -62,9 +62,9 @@ partenza non è più raggiungibile — si perde l'accesso ai dati condivisi degl
   Il vincolo che le teneva ferme è caduto lo stesso giorno: l'app capisce l'inglese, quindi
   **sono pubblicabili**. La headline 3 «"At 3" means 3 PM.» è vera e coperta da un test.
   Mancano ancora poster frame e formati social in inglese.
-- **File `.icon` di Icon Composer.** I tre livelli SVG sono pronti in `Design/AppIcon/`;
-  il montaggio è manuale in Xcode (istruzioni in `Design/README.md`). Nel frattempo
-  l'asset catalog usa i PNG 1024 delle tre apparenze.
+- ~~**File `.icon` di Icon Composer**~~ — *fatto il 21/09/2026*. `TapMemo/TapMemo.icon` è
+  l'icona che l'app spedisce: gradiente a due fermate, segno vettoriale, fascia forata,
+  ombra al 40%. L'`appiconset` con i PNG è stato rimosso. Dettagli in `Design/README.md`.
 - **Prova su dispositivo.** Microfono, trascrizione live e waveform non sono verificabili nel
   simulatore; da controllare anche la resa in dark mode delle schermate di registrazione e
   conferma.

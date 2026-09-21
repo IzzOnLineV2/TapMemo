@@ -69,6 +69,7 @@ Contrasto: headline bianche su fondo saturo **8.9:1**, `#1A0F52` su fondo chiaro
 ## Stato
 
 - **it-IT** — 7 immagini, poster frame, 1:1 e 16:9. Pubblicabili.
-- **en-US** — 7 immagini. **Non pubblicare prima della release multilingua**: mostrano una
-  frase inglese che crea un evento, cosa che l'app non fa ancora (vedi `TODO.md`).
+- **en-US** — 7 immagini. **Pubblicabili dal 21/09/2026**: l'app capisce l'inglese, quindi la
+  frase mostrata nell'immagine 2 crea davvero l'evento e «"At 3" means 3 PM.» è una promessa
+  che il parser mantiene (verificata in `TapMemoTests/MemoParserTests.swift`).
   Poster frame e formati social in inglese non sono ancora stati generati.

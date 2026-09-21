@@ -608,7 +608,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "dopodomani, sabato 25, stasera, a mezzogiorno."
+            "value": "the day after tomorrow, Saturday the 25th, tonight, at noon."
           }
         }
       }
@@ -648,7 +648,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "«ricordami la spesa domani alle 3»"
+            "value": "“remind me to buy milk tomorrow at 3”"
           }
         }
       }

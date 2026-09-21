@@ -25,8 +25,12 @@ final class VoiceManager: NSObject, ObservableObject {
     /// Permessi negati o audio non disponibile: diventa una card in linea (3h).
     @Published var issue: AppIssue?
 
+    /// La lingua in cui l'app si sta mostrando: chi legge l'interfaccia in
+    /// inglese si aspetta che il microfono ascolti in inglese.
+    let language = MemoLanguageCatalog.current
+
     private let audioEngine = AVAudioEngine()
-    private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "it-IT"))
+    private lazy var speechRecognizer = Self.makeRecognizer(for: language)
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
 
@@ -34,6 +38,18 @@ final class VoiceManager: NSObject, ObservableObject {
     private var didDeliver = false
     private var didCancel = false
     private var fallbackDelivery: Task<Void, Never>?
+
+    /// Preferisce la variante regionale del dispositivo quando la lingua combacia
+    /// (en-GB, it-CH): il riconoscimento è più preciso sull'accento locale.
+    /// `SFSpeechRecognizer(locale:)` restituisce nil se la lingua non è supportata.
+    private static func makeRecognizer(for language: MemoLanguage) -> SFSpeechRecognizer? {
+        let device = Locale.current
+        if device.language.languageCode?.identifier == language.code,
+           let regional = SFSpeechRecognizer(locale: device) {
+            return regional
+        }
+        return SFSpeechRecognizer(locale: Locale(identifier: language.speechLocale))
+    }
 
     // MARK: - Permessi
 

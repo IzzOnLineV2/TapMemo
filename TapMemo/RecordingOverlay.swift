@@ -85,19 +85,29 @@ struct RecordingOverlay: View {
                 Text("Dì quando…")
                     .font(.title2)
                     .foregroundStyle(.tertiary)
-            } else if let separator = partialText.lastIndex(of: " ") {
-                Text(String(partialText[partialText.startIndex..<separator]) + " ")
-                    .foregroundStyle(.primary)
-                + Text(String(partialText[partialText.index(after: separator)...]))
-                    .foregroundStyle(.secondary)
             } else {
-                Text(partialText).foregroundStyle(.primary)
+                Text(attributedPartial).foregroundStyle(.primary)
             }
         }
         .font(.title2)
         .multilineTextAlignment(.leading)
         .frame(maxWidth: .infinity, alignment: .leading)
         .animation(TMMotion.state, value: partialText)
+    }
+
+    /// L'ultima parola resta più chiara finché il riconoscitore non la consolida.
+    private var attributedPartial: AttributedString {
+        guard let separator = partialText.lastIndex(of: " ") else {
+            return AttributedString(partialText)
+        }
+
+        var result = AttributedString(partialText[partialText.startIndex..<separator] + " ")
+
+        var trailing = AttributedString(String(partialText[partialText.index(after: separator)...]))
+        trailing.foregroundColor = Color.secondary
+        result += trailing
+
+        return result
     }
 
     @ViewBuilder

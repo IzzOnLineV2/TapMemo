@@ -118,10 +118,10 @@ final class VoiceManager: NSObject, ObservableObject {
             let inputNode = audioEngine.inputNode
             let format = inputNode.outputFormat(forBus: 0)
 
-            inputNode.installTap(onBus: 0, bufferSize: 1024, format: format) { buffer, _ in
+            inputNode.installTap(onBus: 0, bufferSize: 1024, format: format) { [weak self] buffer, _ in
                 request.append(buffer)
-                let value = Self.normalizedLevel(of: buffer)
-                Task { @MainActor [weak self] in self?.level = value }
+                let value = VoiceManager.normalizedLevel(of: buffer)
+                Task { @MainActor in self?.level = value }
             }
 
             audioEngine.prepare()

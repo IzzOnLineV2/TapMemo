@@ -52,7 +52,8 @@ enum MemoDestination {
 
     /// Ordine usato in tinted mode, dove il colore non è disponibile e la
     /// destinazione si legge dalla posizione (5c).
-    var sortRank: Int {
+    /// `nonisolated`: il widget lo legge dalla sua timeline, fuori dal main actor.
+    nonisolated var sortRank: Int {
         switch self {
         case .calendar: 0
         case .reminder: 1
@@ -64,7 +65,7 @@ enum MemoDestination {
 extension MemoItem {
     /// La destinazione principale. Un memo in entrambi i posti è «in Calendario»
     /// con un'aggiunta, perché l'evento è l'esito che l'app promette.
-    var destination: MemoDestination {
+    nonisolated var destination: MemoDestination {
         if isInCalendar { return .calendar }
         if isInReminder { return .reminder }
         return .local
@@ -74,7 +75,7 @@ extension MemoItem {
     var hasSecondaryDestination: Bool { isInCalendar && isInReminder }
 
     /// Data in forma parlata: «domani, 15:00». Nil se il memo non ha data.
-    var spokenDueDate: String? {
+    nonisolated var spokenDueDate: String? {
         guard let dueAt else { return nil }
         let cal = Calendar.current
         let time = dueAt.formatted(date: .omitted, time: .shortened)
@@ -158,7 +159,8 @@ struct MemoSnapshot: Identifiable, Hashable {
         }
     }
 
-    init(_ memo: MemoItem) {
+    /// Il widget costruisce gli snapshot nella sua timeline, fuori dal main actor.
+    nonisolated init(_ memo: MemoItem) {
         id = memo.id
         title = memo.normalizedTitle
         dueAt = memo.dueAt

@@ -34,21 +34,25 @@ struct ProcessingCard: View {
 
     /// La porzione letta come data/ora si stacca in accento.
     private var highlightedTranscript: some View {
-        Group {
-            if let range = MemoParser.temporalHighlight(in: transcript) {
-                Text("«" + String(transcript[transcript.startIndex..<range.lowerBound]))
-                    .foregroundStyle(.primary)
-                + Text(String(transcript[range]))
-                    .foregroundStyle(TMColor.accent)
-                    .fontWeight(.semibold)
-                + Text("»")
-                    .foregroundStyle(.primary)
-            } else {
-                Text("«\(transcript)»")
-                    .foregroundStyle(.primary)
-            }
+        Text(attributedTranscript)
+            .font(.headline)
+            .fontWeight(.regular)
+            .foregroundStyle(.primary)
+    }
+
+    private var attributedTranscript: AttributedString {
+        guard let range = MemoParser.temporalHighlight(in: transcript) else {
+            return AttributedString("«\(transcript)»")
         }
-        .font(.headline)
-        .fontWeight(.regular)
+
+        var result = AttributedString("«" + transcript[transcript.startIndex..<range.lowerBound])
+
+        var temporal = AttributedString(String(transcript[range]))
+        temporal.foregroundColor = TMColor.accent
+        temporal.font = .headline.weight(.semibold)
+        result += temporal
+
+        result += AttributedString("»")
+        return result
     }
 }

@@ -49,9 +49,29 @@ forza (headline 3 della scheda App Store, en-US: *«Built for Italian.»*). Apri
 lingue con un parser più debole indebolisce proprio quell'argomento. Ragionevole farlo solo
 quando i numeri mostrano richiesta da fuori Italia.
 
-**Se resta com'è**, nella scheda App Store in inglese va scritto esplicitamente che il
-riconoscimento è in italiano. Per la stessa ragione le frasi d'esempio restano in italiano
-anche nella localizzazione inglese: sono parole da *pronunciare*, non da tradurre.
+### Deciso il 21/09/2026: si fa, e gli asset inglesi si preparano prima
+
+Le 7 immagini dell'App Store in inglese vengono prodotte **già completamente tradotte**,
+frasi pronunciate comprese, in attesa che il riconoscimento le regga.
+
+Due conseguenze da non perdere di vista:
+
+- **Non pubblicare la galleria inglese prima di questa release.** Mostrerebbe una frase
+  inglese che crea un evento mentre l'app non lo fa: discrepanza contestabile in review e
+  recensioni a una stella da chi scarica.
+- **L'immagine 3 va ripensata, non tradotta.** Oggi in en-US dice *«Built for Italian.»*
+  (alternative: *«Real Italian dates.»*, *«Speaks your Italian.»*): se l'app capisce anche
+  l'inglese, l'argomento non regge più. L'equivalente inglese della stessa idea esiste — in
+  inglese «at 3» è ambiguo quanto «alle 3» e il default sensato resta le 15 — ma è una
+  headline diversa, da far rigenerare al progetto Design.
+
+Finché la release non esce, nella scheda inglese va scritto esplicitamente che il
+riconoscimento è in italiano.
+
+Nel codice invece le frasi d'esempio **restano italiane** finché il parser lo è: sono parole
+da *pronunciare*, e tradurle prima del tempo sarebbe un invito a fallire
+(`EmptyStateView.swift`, chiavi `«ricordami la spesa domani alle 3»` e
+`dopodomani, sabato 25, stasera, a mezzogiorno.` nei cataloghi).
 
 ---
 
@@ -59,7 +79,8 @@ anche nella localizzazione inglese: sono parole da *pronunciare*, non da tradurr
 
 - **Immagini App Store in inglese.** Il progetto Claude Design ha le headline en-US
   (`Design/AppStore/HEADLINES.md`) ma non ha generato le 7 immagini: vanno chieste e
-  riesportate in `Design/AppStore/en-US/`.
+  riesportate in `Design/AppStore/en-US/`. Da produrre tradotte per intero e **da tenere
+  non pubblicate** finché il riconoscimento non capisce l'inglese — vedi sopra.
 - **File `.icon` di Icon Composer.** I tre livelli SVG sono pronti in `Design/AppIcon/`;
   il montaggio è manuale in Xcode (istruzioni in `Design/README.md`). Nel frattempo
   l'asset catalog usa i PNG 1024 delle tre apparenze.

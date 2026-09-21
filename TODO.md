@@ -77,10 +77,11 @@ da *pronunciare*, e tradurle prima del tempo sarebbe un invito a fallire
 
 ## Altri pendenti dal redesign (21/09/2026)
 
-- **Immagini App Store in inglese.** Il progetto Claude Design ha le headline en-US
-  (`Design/AppStore/HEADLINES.md`) ma non ha generato le 7 immagini: vanno chieste e
-  riesportate in `Design/AppStore/en-US/`. Da produrre tradotte per intero e **da tenere
-  non pubblicate** finché il riconoscimento non capisce l'inglese — vedi sopra.
+- **Immagini App Store in inglese** — *fatte il 21/09/2026*, tradotte per intero, in
+  `Design/AppStore/en-US/`. **Restano non pubblicate** finché il riconoscimento non capisce
+  l'inglese: mostrano una frase inglese che crea un evento. La headline 3 è stata ripensata
+  come previsto — «"At 3" means 3 PM.» — con due alternative registrate in `HEADLINES.md`.
+  Mancano ancora poster frame e formati social in inglese.
 - **File `.icon` di Icon Composer.** I tre livelli SVG sono pronti in `Design/AppIcon/`;
   il montaggio è manuale in Xcode (istruzioni in `Design/README.md`). Nel frattempo
   l'asset catalog usa i PNG 1024 delle tre apparenze.

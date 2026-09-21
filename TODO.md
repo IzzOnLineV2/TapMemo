@@ -64,6 +64,37 @@ rompono davvero — ma **TapMemo non usa il portachiavi**: nessun `SecItem`, nes
 identificatore del gruppo senza prefisso di team, ed è per questo che conservarlo identico ha
 salvato i dati. L'avviso comparirà al massimo ancora una volta.
 
+## Riconoscimento vocale: sui server di Apple o sul dispositivo?
+
+**Stato:** da decidere · aperto il 21/09/2026
+
+`VoiceManager.swift` imposta `requiresOnDeviceRecognition = false`, quindi l'audio viene
+inviato ad Apple per la trascrizione — e iOS lo dice all'utente, letteralmente, nella
+finestra di permesso: «I dati vocali di quest'app verranno inviati ad Apple per
+l'elaborazione».
+
+È in tensione con il posizionamento dell'app. L'immagine 6 della scheda App Store dice
+«Resta sul telefono», e la descrizione italiana precedente affermava che la trascrizione
+avviene sul dispositivo: non era vero, ed è stato corretto in `Design/AppStore/LISTING-it.md`.
+Un utente che legge quella frase e poi vede la finestra di Apple si sente preso in giro.
+
+**La correzione è di due righe:**
+
+```swift
+request.requiresOnDeviceRecognition = speechRecognizer?.supportsOnDeviceRecognition ?? false
+```
+
+Condizionarla a `supportsOnDeviceRecognition` è necessario: se il modello linguistico non è
+scaricato, imporre il riconoscimento locale fa fallire la trascrizione.
+
+**Il compromesso da valutare:** il riconoscimento sul dispositivo è più chiuso ma
+tipicamente meno accurato di quello sui server, e l'accuratezza qui è tutto — un titolo
+sbagliato o un'ora sbagliata rendono l'app inutile. Vale la pena provarlo sul telefono con
+frasi vere, in entrambe le lingue, prima di decidere.
+
+Se si adotta, la descrizione può tornare a dire che tutto resta sul telefono, ed è l'unica
+condizione in cui può dirlo.
+
 ## Altri pendenti dal redesign (21/09/2026)
 
 - **Immagini App Store in inglese** — *fatte il 21/09/2026*, in `Design/AppStore/en-US/`.

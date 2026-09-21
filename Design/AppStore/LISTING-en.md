@@ -59,10 +59,11 @@ Speech recognition, date parsing and the interface all follow the language your 
 set to. Both are first-class: the Italian "alle 3" and the English "at 3" get the same
 careful treatment.
 
-IT STAYS ON YOUR IPHONE
-No account. No sign-up. No server. No analytics, no trackers, no third-party SDKs. Speech is
-transcribed by Apple's own framework, memos are stored on your device, and the only things
-TapMemo writes anywhere are the events and reminders you asked for, in your own calendar.
+NO ACCOUNT, NO SERVER
+No sign-up, nothing to subscribe to, no analytics, no trackers, no third-party SDKs. Your
+memos stay on your iPhone, and the only things TapMemo writes anywhere are the events and
+reminders you asked for, in your own calendar. Speech is transcribed by Apple's speech
+recognition — the same one system dictation uses.
 
 Free, with no purchases and nothing to subscribe to.
 ```
@@ -80,6 +81,10 @@ che le linee guida vietano.
 ## Da non dimenticare
 
 - **Privacy nutrition label**: la risposta corretta è *Data Not Collected*. L'app non ha
-  backend, non raccoglie nulla e non contiene SDK di terze parti.
+  backend, non raccoglie nulla e non contiene SDK di terze parti. La trascrizione passa dal
+  framework di Apple, non da noi.
+- **Non scrivere che la trascrizione avviene sul dispositivo** finché
+  `requiresOnDeviceRecognition` resta `false`: iOS dice all'utente il contrario nella
+  finestra di permesso. Vedi `TODO.md`.
 - **Age rating**: 4+.
 - **Support URL** e **Privacy Policy URL** sono obbligatori: servono due pagine raggiungibili.

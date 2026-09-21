@@ -32,32 +32,29 @@ della lingua.
 di ascolto dall'app — oggi segue l'interfaccia e non è configurabile, che per un'app da tre
 secondi sembra la scelta giusta.
 
-## Il team di firma: SmartApiBox o IzzOnLine?
+## ~~Il team di firma~~ — risolto il 21/09/2026
 
-**Stato:** da decidere · aperto il 21/09/2026
+TapMemo è passata da **SmartApiBox (32BK2Y9JL3)** a **IzzOnLine / Stefania Izzo
+(WF6Z643R96)** con un trasferimento in App Store Connect. Il trasferimento porta con sé la
+scheda e il bundle ID principale, **ma non le capability collegate**: l'App Group e l'App ID
+del widget erano rimasti nell'account di partenza, e senza di loro nessuna build firmata
+IzzOnLine poteva essere caricata.
 
-Il commit `fc50ec6` aveva impostato `DEVELOPMENT_TEAM = WF6Z643R96` (IzzOnLine), ma con quel
-team **non si può compilare**: `com.smartapibox.tapmemo`, `com.smartapibox.tapmemo.widget` e
-soprattutto l'App Group `group.com.smartapibox.tapmemo` appartengono al team
-**32BK2Y9JL3 (SmartApiBox S.r.l.s.)**, che è anche quello con cui l'app è pubblicata — i
-profili *Store* locali lo confermano. Gli identificatori di App Group sono unici a livello
-globale: IzzOnLine non può registrarne uno già preso.
+Sono stati liberati dall'account vecchio e registrati nel nuovo **con gli stessi
+identificatori**:
 
-Il team è quindi stato riportato a `32BK2Y9JL3` per poter produrre la build.
+- `group.com.smartapibox.tapmemo` — l'identificatore *è* il percorso del contenitore
+  condiviso: averlo conservato identico è ciò che ha salvato i memo degli utenti già
+  installati. Cambiarlo avrebbe reso il loro database irraggiungibile.
+- `com.smartapibox.tapmemo.widget` — conservato identico, così i widget già piazzati sulla
+  Home restano al loro posto dopo l'aggiornamento.
 
-**Se il passaggio a IzzOnLine è voluto**, non è una riga di configurazione ma un'operazione
-in tre pezzi:
+`DEVELOPMENT_TEAM` è ora `WF6Z643R96` in tutte le configurazioni. La 1.1 è firmata
+*Apple Distribution: Stefania Izzo* con profili Store che portano l'App Group.
 
-1. **Trasferimento dell'app** in App Store Connect da SmartApiBox a IzzOnLine. Porta con sé
-   il bundle ID e la scheda, con recensioni e utenti.
-2. **L'App Group non si trasferisce.** Serve un identificatore nuovo (es.
-   `group.com.izzonline.tapmemo`) registrato nel team di destinazione.
-3. **Migrazione dei dati.** Il database condiviso vive dentro il gruppo vecchio
-   (`group.com.smartapibox.tapmemo/TapMemo.sqlite`): cambiando gruppo, al primo avvio l'app
-   deve copiare lo store dal container vecchio al nuovo, o **gli utenti perdono tutti i
-   memo**. Vale la stessa regola di `SCHEMA_VERSIONING.md`: mai perdere i dati in produzione.
-
-Finché i tre pezzi non sono pronti insieme, il team resta SmartApiBox.
+**Da ricordare per il futuro:** se l'app venisse mai trasferita di nuovo, App Group e App ID
+delle estensioni non seguono. Vanno liberati e riregistrati a mano, oppure — se l'account di
+partenza non è più raggiungibile — si perde l'accesso ai dati condivisi degli utenti.
 
 ## Altri pendenti dal redesign (21/09/2026)
 

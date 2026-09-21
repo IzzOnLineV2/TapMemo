@@ -73,6 +73,9 @@ salvato i dati. L'avviso comparirà al massimo ancora una volta.
 - ~~**File `.icon` di Icon Composer**~~ — *fatto il 21/09/2026*. `TapMemo/TapMemo.icon` è
   l'icona che l'app spedisce: gradiente a due fermate, segno vettoriale, fascia forata,
   ombra al 40%. L'`appiconset` con i PNG è stato rimosso. Dettagli in `Design/README.md`.
-- **Prova su dispositivo.** Microfono, trascrizione live e waveform non sono verificabili nel
-  simulatore; da controllare anche la resa in dark mode delle schermate di registrazione e
-  conferma.
+- ~~**Prova su dispositivo**~~ — *fatta il 21/09/2026* con la build TestFlight 1.1 (7)
+  installata **sopra** la versione dell'App Store. L'app funziona e **i memo preesistenti
+  sono stati conservati**: è la conferma che il contenitore dell'App Group è sopravvissuto al
+  passaggio da SmartApiBox a IzzOnLine, l'unica cosa che nessun simulatore poteva dimostrare.
+  Restano da guardare con calma, quando capita: la resa in dark mode delle schermate di
+  registrazione e conferma, e l'icona a 29 pt su schermo vero.

@@ -56,6 +56,14 @@ identificatori**:
 delle estensioni non seguono. Vanno liberati e riregistrati a mano, oppure — se l'account di
 partenza non è più raggiungibile — si perde l'accesso ai dati condivisi degli utenti.
 
+**L'avviso 90076 al caricamento è previsto e innocuo.** App Store Connect segnala «Potential
+Loss of Keychain Access» perché il prefisso dell'`application-identifier` cambia
+(`32BK2Y9JL3.` → `WF6Z643R96.`). I gruppi del portachiavi sono prefissati dal team, quindi si
+rompono davvero — ma **TapMemo non usa il portachiavi**: nessun `SecItem`, nessun entitlement
+`keychain-access-groups`. I contenitori App Group, al contrario, sono indirizzati dal solo
+identificatore del gruppo senza prefisso di team, ed è per questo che conservarlo identico ha
+salvato i dati. L'avviso comparirà al massimo ancora una volta.
+
 ## Altri pendenti dal redesign (21/09/2026)
 
 - **Immagini App Store in inglese** — *fatte il 21/09/2026*, in `Design/AppStore/en-US/`.

@@ -18,19 +18,53 @@ un giorno di calendario. Cinque forme, nessun testo, nessun microfono.
 | `tapmemo-icon-def/dark/tint/clear.svg` | Le quattro apparenze già appiattite, per confronto e mockup |
 | `tapmemo-icon-clear.png` | Anteprima dell'apparenza Clear |
 
-### Come montarla in Icon Composer (Xcode 26+)
+### `TapMemo.icon` — il documento Icon Composer, già montato
 
-1. Nuovo documento `.icon`, piattaforma iOS.
-2. Importa i tre SVG **in quest'ordine**: `bg` → `mid` → `fg`.
-3. Lascia la specularità di default e porta l'ombra del livello di primo piano al **40%**.
-4. Verifica le quattro apparenze (Default, Dark, Clear, Tinted) e la resa a 29 pt.
-5. Sostituisci `AppIcon.appiconset` con il `.icon` risultante.
+`AppIcon/TapMemo.icon` è un documento pronto: aprilo con **Icon Composer** (in
+`/Applications`, o dentro Xcode) per vederlo e ritoccarlo.
 
-> Lo sfondo è esportato **quadrato a pieno formato**: la maschera a squircle la applica
-> Icon Composer. Non arrotondarlo a mano, o si vedrebbe un bordo rientrato.
+Il formato è una cartella con un manifest e gli asset, quindi si legge e si versiona come
+codice:
 
-Nel frattempo l'asset catalog contiene i PNG 1024 delle tre apparenze richieste da iOS
-(`1024.png`, `1024-dark.png`, `1024-tinted.png`), che funzionano già senza Icon Composer.
+```
+TapMemo.icon/
+  icon.json              manifest
+  Assets/segno.svg       il livello di primo piano, vettoriale
+```
+
+Com'è composto, e perché così:
+
+- **Sfondo**: `linear-gradient` a due fermate, `#7A63FF → #3A20BE`, gli stessi del design.
+  Verificato sul render: `#7664F6` in alto, `#3621B8` in basso.
+- **Un solo livello** di primo piano, `segno.svg`, con la fascia come **foro** — il fondo
+  passa attraverso, che è ciò che fa funzionare l'apparenza *tinted*.
+- **Ombra** `neutral` al **40%**, come chiedeva il design. La profondità che nei vecchi SVG
+  era un livello intermedio disegnato a mano ora la genera il sistema: Icon Composer fa
+  ombra e specularità da sé, quindi `tapmemo-icon-mid.svg` non serve più al documento e
+  resta solo come riferimento.
+
+### Verificarlo senza aprire l'app
+
+Dentro Icon Composer c'è un eseguibile a riga di comando che renderizza qualunque
+apparenza:
+
+```sh
+"/Applications/Icon Composer.app/Contents/Executables/ictool" \
+  Design/AppIcon/TapMemo.icon --export-image --output-file /tmp/out.png \
+  --platform iOS --rendition Default --width 1024 --height 1024 --scale 1
+```
+
+Apparenze valide: `Default`, `Dark`, `TintedLight`, `TintedDark`, `ClearLight`, `ClearDark`.
+Utile anche per controllare la resa a 29 pt (`--width 29 --height 29 --scale 3`), che è la
+dimensione su cui il design si giocava tutto.
+
+> Gli SVG piatti (`-def`, `-dark`, `-tint`, `-clear`) restano come mockup: sono quelli che
+> compaiono nei poster dell'App Store.
+
+**Nell'app oggi** l'asset catalog usa ancora i PNG 1024 delle tre apparenze
+(`1024.png`, `1024-dark.png`, `1024-tinted.png`), **quadrati a pieno formato e senza canale
+alpha** — un raggio cotto dentro o una trasparenza fanno rifiutare la build da App Store
+Connect. Passare al `.icon` è un cambio di configurazione del progetto, ancora da fare.
 
 Geometria, su griglia 1024: barre larghe 84, raggio 42, a x 214 / 322 / 430, alte
 240 / 460 / 320; giorno 236 × 236 raggio 62 a x 578; fascia 236 × 18 a y 452, **foro** nel

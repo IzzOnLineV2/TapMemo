@@ -71,7 +71,10 @@
 		9E1907342F572111007B01C0 /* Exceptions for "TapMemo" folder in "TapMemoWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				DesignTokens.swift,
 				Item.swift,
+				MemoPresentation.swift,
+				TapMemoSharedStore.swift,
 				TapMemoWidget.swift,
 			);
 			target = 9E1907142F5718D0007B01C0 /* TapMemoWidgetExtension */;

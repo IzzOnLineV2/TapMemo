@@ -12,5 +12,6 @@ import SwiftUI
 struct TapMemoWidgetBundle: WidgetBundle {
     var body: some Widget {
         TapMemoWidget()
+        TapMemoRecordControl()
     }
 }

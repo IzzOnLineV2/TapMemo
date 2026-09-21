@@ -1,66 +1,188 @@
 {
-  "sourceLanguage" : "it",
-  "strings" : {
-    "Nessun memo" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No memos"
+  "sourceLanguage": "it",
+  "strings": {
+    "Apre TapMemo e avvia subito l'ascolto.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens TapMemo and starts listening right away."
           }
         }
       }
     },
-    "Nessun memo ancora" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No memos yet"
+    "Avvia un memo vocale senza cercare l'app.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start a voice memo without hunting for the app."
           }
         }
       }
     },
-    "Recenti" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recent"
+    "In Calendario": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Calendar"
           }
         }
       }
     },
-    "Registra" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Record"
+    "In Promemoria": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Reminders"
           }
         }
       }
     },
-    "TapMemo" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "TapMemo"
+    "Nessun memo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No memos"
           }
         }
       }
     },
-    "Visualizza i tuoi memo recenti e registra rapidamente nuovi promemoria vocali." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "View your recent memos and quickly record new voice reminders."
+    "Nessun memo ancora": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No memos yet"
+          }
+        }
+      }
+    },
+    "Parla": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speak"
+          }
+        }
+      }
+    },
+    "Prossimi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Up next"
+          }
+        }
+      }
+    },
+    "Registra un memo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Record a memo"
+          }
+        }
+      }
+    },
+    "Registra un memo con un tocco e vedi il prossimo impegno.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Record a memo with one tap and see what's next."
+          }
+        }
+      }
+    },
+    "Solo in TapMemo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only in TapMemo"
+          }
+        }
+      }
+    },
+    "TapMemo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TapMemo"
+          }
+        }
+      }
+    },
+    "TapMemo · tocca e parla": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TapMemo · tap and speak"
+          }
+        }
+      }
+    },
+    "TapMemo, %lld memo oggi": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "TapMemo, %lld memo today"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "TapMemo, %lld memos today"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Tocca il cerchio per registrare": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap the circle to record"
+          }
+        }
+      }
+    },
+    "domani, %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tomorrow, %@"
+          }
+        }
+      }
+    },
+    "oggi, %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "today, %@"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

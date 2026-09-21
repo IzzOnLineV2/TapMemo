@@ -4,6 +4,9 @@
 //
 //  Created by Stefania Izzo on 03/03/26.
 //
+//  Parte 4 del redesign — il widget non replica l'app: fa una cosa (far partire
+//  la registrazione) e mostra il prossimo impegno.
+//
 
 import WidgetKit
 import SwiftUI
@@ -12,58 +15,31 @@ import SwiftData
 // MARK: - Timeline Provider
 
 struct TapMemoWidgetProvider: TimelineProvider {
+
     func placeholder(in context: Context) -> TapMemoEntry {
-        TapMemoEntry(date: Date(), memos: sampleMemos())
+        TapMemoEntry(date: Date(), memos: Self.sampleMemos)
     }
-    
+
     func getSnapshot(in context: Context, completion: @escaping (TapMemoEntry) -> Void) {
-        let entry: TapMemoEntry
-        
-        if context.isPreview {
-            entry = TapMemoEntry(date: Date(), memos: sampleMemos())
-        } else {
-            entry = TapMemoEntry(date: Date(), memos: fetchMemos())
-        }
-        
-        completion(entry)
+        let memos = context.isPreview ? Self.sampleMemos : fetchMemos()
+        completion(TapMemoEntry(date: Date(), memos: memos))
     }
-    
+
     func getTimeline(in context: Context, completion: @escaping (Timeline<TapMemoEntry>) -> Void) {
-        let memos = fetchMemos()
-        let entry = TapMemoEntry(date: Date(), memos: memos)
-        
-        // Aggiorna ogni 15 minuti
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
-        let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
-        
-        completion(timeline)
+        let entry = TapMemoEntry(date: Date(), memos: fetchMemos())
+        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date()
+        completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
     }
-    
-    private func fetchMemos() -> [MemoItem] {
-        let appGroupID = "group.com.smartapibox.tapmemo"
 
-        guard let groupURL = FileManager.default.containerURL(
-            forSecurityApplicationGroupIdentifier: appGroupID
-        ) else {
-            print("⚠️ Widget: App Group '\(appGroupID)' non trovato!")
-            return []
-        }
-
-        let storeURL = groupURL.appendingPathComponent("TapMemo.sqlite")
-
-        // Se il database non esiste ancora, l'app non è stata aperta
-        guard FileManager.default.fileExists(atPath: storeURL.path) else {
-            print("⚠️ Widget: Database non ancora creato, apri TapMemo prima")
-            return []
-        }
+    /// Lettura in sola lettura dello store condiviso. Se l'app non è mai stata
+    /// aperta il database non esiste ancora: il widget lo dice e basta.
+    private func fetchMemos() -> [MemoSnapshot] {
+        guard let storeURL = TapMemoSharedStore.storeURL,
+              FileManager.default.fileExists(atPath: storeURL.path) else { return [] }
 
         let config = ModelConfiguration(url: storeURL)
 
-        let container: ModelContainer
-        do {
-            container = try ModelContainer(for: MemoItem.self, configurations: config)
-        } catch {
-            print("⚠️ Widget: ModelContainer error: \(error)")
+        guard let container = try? ModelContainer(for: MemoItem.self, configurations: config) else {
             return []
         }
 
@@ -71,273 +47,315 @@ struct TapMemoWidgetProvider: TimelineProvider {
             sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
         )
 
-        do {
-            let context = ModelContext(container)
-            let memos = try context.fetch(descriptor)
-            print("✅ Widget: Caricati \(memos.count) memo")
-            return Array(memos.prefix(5))
-        } catch {
-            print("⚠️ Widget: Fetch error: \(error)")
-            return []
-        }
-    }
-    
-    private func sampleMemos() -> [MemoItem] {
-        [
-            MemoItem(
-                originalText: "prendere pietro alle 3",
-                normalizedTitle: "Prendere Pietro",
-                dueAt: Date().addingTimeInterval(3600)
-            ),
-            MemoItem(
-                originalText: "fare la spesa domani",
-                normalizedTitle: "Fare la spesa",
-                dueAt: Date().addingTimeInterval(86400)
-            )
-        ]
-    }
-}
+        let context = ModelContext(container)
+        guard let memos = try? context.fetch(descriptor) else { return [] }
 
-// MARK: - Timeline Entry
+        return memos.prefix(8).map(MemoSnapshot.init)
+    }
+
+    static let sampleMemos: [MemoSnapshot] = [
+        MemoSnapshot(title: "Fare la spesa", dueAt: Date().addingTimeInterval(86_400),
+                     spokenDueDate: "domani, 15:00", destination: .calendar),
+        MemoSnapshot(title: "Prendere Pietro", dueAt: Date().addingTimeInterval(3_600),
+                     spokenDueDate: "oggi, 17:00", destination: .reminder),
+        MemoSnapshot(title: "Chiamare il dentista", dueAt: nil,
+                     spokenDueDate: nil, destination: .local)
+    ]
+}
 
 struct TapMemoEntry: TimelineEntry {
     let date: Date
-    let memos: [MemoItem]
+    let memos: [MemoSnapshot]
+
+    /// Il prossimo impegno davvero futuro; se non ce n'è, il memo più recente.
+    var next: MemoSnapshot? {
+        memos
+            .filter { ($0.dueAt ?? .distantPast) >= date }
+            .min { ($0.dueAt ?? .distantFuture) < ($1.dueAt ?? .distantFuture) }
+            ?? memos.first
+    }
+
+    var todayCount: Int {
+        memos.filter { guard let due = $0.dueAt else { return false }
+                       return Calendar.current.isDateInToday(due) }.count
+    }
 }
 
-// MARK: - Widget Views
+// MARK: - Pezzi comuni
+
+private let recordURL = URL(string: "tapmemo://record")!
+
+/// Il disco resta pieno anche in tinted: una forma piena è l'unica che tiene il
+/// contrasto quando il colore lo decide il sistema (5c).
+private struct RecordDisc: View {
+    var size: CGFloat = 64
+    var label: LocalizedStringKey? = "Parla"
+
+    var body: some View {
+        VStack(spacing: TMSpace.s) {
+            ZStack {
+                Circle()
+                    .fill(TMColor.accent)
+                    .frame(width: size, height: size)
+
+                Image(systemName: "mic.fill")
+                    .font(.system(size: size * 0.42, weight: .medium))
+                    .foregroundStyle(.white)
+            }
+            .widgetAccentable()
+
+            if let label {
+                Text(label)
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.primary)
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Registra un memo")
+        .accessibilityAddTraits(.isButton)
+    }
+}
+
+/// Riga del widget: titolo + data e destinazione, il badge ridotto a un punto
+/// solo dove non c'è spazio per la parola.
+private struct WidgetMemoRow: View {
+    let memo: MemoSnapshot
+    var showsDestination = true
+
+    @Environment(\.widgetRenderingMode) private var renderingMode
+
+    var body: some View {
+        HStack(alignment: .top, spacing: TMSpace.s) {
+            if renderingMode == .fullColor {
+                MemoStatusDot(destination: memo.destination)
+                    .padding(.top, 5)
+            }
+
+            VStack(alignment: .leading, spacing: 1) {
+                Text(memo.title)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .lineLimit(1)
+
+                if let detail = detailText {
+                    Text(detail)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+            }
+
+            Spacer(minLength: 0)
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    private var detailText: String? {
+        let destination: String? = showsDestination ? memo.destination.plainLabel : nil
+
+        guard let date = memo.spokenDueDate else { return destination }
+        guard let destination else { return date }
+        return "\(date) · \(destination)"
+    }
+}
+
+// MARK: - Home Screen (5a)
 
 struct TapMemoWidgetEntryView: View {
     var entry: TapMemoEntry
     @Environment(\.widgetFamily) var family
-    
+
     var body: some View {
         switch family {
-        case .systemSmall:
-            SmallWidgetView(memos: entry.memos)
-        case .systemMedium:
-            MediumWidgetView(memos: entry.memos)
-        case .systemLarge:
-            LargeWidgetView(memos: entry.memos)
-        default:
-            SmallWidgetView(memos: entry.memos)
+        case .systemSmall:        SmallWidgetView(entry: entry)
+        case .systemMedium:       MediumWidgetView(entry: entry)
+        case .systemLarge:        LargeWidgetView(entry: entry)
+        case .accessoryCircular:  CircularAccessoryView(entry: entry)
+        case .accessoryRectangular: RectangularAccessoryView(entry: entry)
+        case .accessoryInline:    InlineAccessoryView(entry: entry)
+        default:                  SmallWidgetView(entry: entry)
         }
     }
 }
-
-// MARK: - Small Widget
 
 struct SmallWidgetView: View {
-    let memos: [MemoItem]
+    let entry: TapMemoEntry
 
     var body: some View {
-        Link(destination: URL(string: "tapmemo://record")!) {
-            VStack(spacing: 12) {
-                ZStack {
-                    Circle()
-                        .fill(Color.blue.gradient)
-                        .frame(width: 64, height: 64)
-
-                    Image(systemName: "mic.fill")
-                        .font(.system(size: 28))
-                        .foregroundColor(.white)
-                }
-
-                Text("Registra")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        Link(destination: recordURL) {
+            RecordDisc(size: 64)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .containerBackground(.fill.tertiary, for: .widget)
+        .containerBackground(TMColor.card, for: .widget)
     }
 }
 
-// MARK: - Medium Widget
-
 struct MediumWidgetView: View {
-    let memos: [MemoItem]
-    
+    let entry: TapMemoEntry
+
     var body: some View {
-        HStack(spacing: 12) {
-            // Quick Action
-            Link(destination: URL(string: "tapmemo://record")!) {
-                VStack(spacing: 8) {
-                    ZStack {
-                        Circle()
-                            .fill(Color.blue.gradient)
-                            .frame(width: 56, height: 56)
-
-                        Image(systemName: "mic.fill")
-                            .font(.system(size: 24))
-                            .foregroundColor(.white)
-                    }
-
-                    Text("Registra")
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
-                }
-                .frame(maxWidth: 80, maxHeight: .infinity)
+        HStack(spacing: TMSpace.l) {
+            Link(destination: recordURL) {
+                RecordDisc(size: 56)
+                    .frame(maxWidth: 88, maxHeight: .infinity)
             }
-            
-            // Memo recenti
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Recenti")
-                    .font(.caption)
+
+            VStack(alignment: .leading, spacing: TMSpace.s) {
+                Text("Prossimi")
+                    .font(.caption2)
                     .fontWeight(.semibold)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .textCase(.uppercase)
-                
-                if memos.isEmpty {
+
+                if entry.memos.isEmpty {
                     Text("Nessun memo")
                         .font(.caption)
-                        .foregroundColor(.secondary)
-                        .frame(maxHeight: .infinity)
+                        .foregroundStyle(.secondary)
+                        .frame(maxHeight: .infinity, alignment: .center)
                 } else {
-                    ForEach(memos.prefix(3)) { memo in
-                        HStack(spacing: 6) {
-                            Circle()
-                                .fill(memoColor(memo))
-                                .frame(width: 6, height: 6)
-                            
-                            Text(memo.normalizedTitle)
-                                .font(.caption)
-                                .lineLimit(1)
-                        }
+                    ForEach(sortedMemos.prefix(2)) { memo in
+                        WidgetMemoRow(memo: memo, showsDestination: false)
                     }
+                    Spacer(minLength: 0)
                 }
-                
-                Spacer()
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding()
-        .containerBackground(.fill.tertiary, for: .widget)
+        .containerBackground(TMColor.card, for: .widget)
     }
-    
-    private func memoColor(_ memo: MemoItem) -> Color {
-        if memo.isInCalendar { return .blue }
-        if memo.isInReminder { return .orange }
-        return .gray
+
+    /// In tinted il colore di stato non c'è: la destinazione si legge dall'ordine.
+    private var sortedMemos: [MemoSnapshot] {
+        entry.memos.sorted { lhs, rhs in
+            if lhs.destinationRank != rhs.destinationRank { return lhs.destinationRank < rhs.destinationRank }
+            return (lhs.dueAt ?? .distantFuture) < (rhs.dueAt ?? .distantFuture)
+        }
     }
 }
 
-// MARK: - Large Widget
-
 struct LargeWidgetView: View {
-    let memos: [MemoItem]
-    
+    let entry: TapMemoEntry
+
     var body: some View {
-        VStack(spacing: 0) {
-            // Header
+        VStack(alignment: .leading, spacing: TMSpace.m) {
             HStack {
                 Text("TapMemo")
                     .font(.headline)
-                
-                Spacer()
-                
-                Link(destination: URL(string: "tapmemo://record")!) {
-                    ZStack {
-                        Circle()
-                            .fill(Color.blue.gradient)
-                            .frame(width: 36, height: 36)
 
-                        Image(systemName: "mic.fill")
-                            .font(.system(size: 16))
-                            .foregroundColor(.white)
-                    }
+                Spacer()
+
+                Link(destination: recordURL) {
+                    RecordDisc(size: 40, label: nil)
                 }
             }
-            .padding()
-            
-            Divider()
-            
-            // Memo list
-            if memos.isEmpty {
-                VStack(spacing: 8) {
-                    Image(systemName: "mic.slash")
-                        .font(.system(size: 48))
-                        .foregroundColor(.secondary.opacity(0.5))
-                    
+
+            if entry.memos.isEmpty {
+                VStack(spacing: TMSpace.s) {
+                    Image(systemName: "waveform")
+                        .font(.system(size: 36))
+                        .foregroundStyle(.tertiary)
                     Text("Nessun memo ancora")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
-                .frame(maxHeight: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                VStack(spacing: 8) {
-                    ForEach(Array(memos.prefix(5))) { memo in
+                VStack(alignment: .leading, spacing: TMSpace.m) {
+                    ForEach(entry.memos.prefix(4)) { memo in
                         WidgetMemoRow(memo: memo)
                     }
-                    Spacer()
                 }
-                .padding()
+
+                Spacer(minLength: 0)
+
+                Text("Tocca il cerchio per registrare")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+                    .frame(maxWidth: .infinity, alignment: .center)
             }
         }
-        .containerBackground(.fill.tertiary, for: .widget)
+        .containerBackground(TMColor.card, for: .widget)
     }
 }
 
-struct WidgetMemoRow: View {
-    let memo: MemoItem
-    
+// MARK: - Lock Screen (5b)
+
+/// Le tre famiglie sono monocromatiche per forza: lo stato passa dal peso del
+/// testo, non dal colore.
+struct CircularAccessoryView: View {
+    let entry: TapMemoEntry
+
     var body: some View {
-        HStack(spacing: 12) {
-            // Icon
-            Circle()
-                .fill(memoColor(memo))
-                .frame(width: 10, height: 10)
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text(memo.normalizedTitle)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .lineLimit(1)
-                
-                if let dueAt = memo.dueAt {
-                    Text(dueAt.formatted(date: .abbreviated, time: .shortened))
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                }
+        ZStack {
+            AccessoryWidgetBackground()
+            VStack(spacing: 0) {
+                Image(systemName: "mic.fill")
+                    .font(.system(size: 14, weight: .semibold))
+                Text("\(entry.todayCount)")
+                    .font(.system(size: 13, weight: .bold))
             }
-            
-            Spacer()
-            
-            // Badge
-            Image(systemName: memoIcon(memo))
-                .font(.caption)
-                .foregroundColor(.secondary)
         }
-        .padding(.vertical, 4)
-    }
-    
-    private func memoColor(_ memo: MemoItem) -> Color {
-        if memo.isInCalendar { return .blue }
-        if memo.isInReminder { return .orange }
-        return .gray
-    }
-
-    private func memoIcon(_ memo: MemoItem) -> String {
-        if memo.isInCalendar { return "calendar" }
-        if memo.isInReminder { return "checkmark.circle" }
-        return "tray"
+        .widgetLabel("oggi")
+        .accessibilityLabel("TapMemo, \(entry.todayCount) memo oggi")
     }
 }
 
-// MARK: - Widget Configuration
+struct RectangularAccessoryView: View {
+    let entry: TapMemoEntry
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 1) {
+            Text("TapMemo · tocca e parla")
+                .font(.caption2)
+                .textCase(.uppercase)
+
+            if let next = entry.next {
+                Text(next.title)
+                    .font(.headline)
+                    .lineLimit(1)
+
+                if let detail = next.spokenDueDate {
+                    Text("\(detail) · \(next.destination.plainLabel)")
+                        .font(.caption2)
+                        .lineLimit(1)
+                }
+            } else {
+                Text("Nessun memo")
+                    .font(.headline)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+struct InlineAccessoryView: View {
+    let entry: TapMemoEntry
+
+    var body: some View {
+        if let next = entry.next, let detail = next.spokenDueDate {
+            Text("\(next.title) · \(detail)")
+        } else {
+            Text("TapMemo · tocca e parla")
+        }
+    }
+}
+
+// MARK: - Configurazione
 
 struct TapMemoWidget: Widget {
     let kind: String = "TapMemoWidget"
-    
+
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: TapMemoWidgetProvider()) { entry in
             TapMemoWidgetEntryView(entry: entry)
         }
         .configurationDisplayName("TapMemo")
-        .description("Visualizza i tuoi memo recenti e registra rapidamente nuovi promemoria vocali.")
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .description("Registra un memo con un tocco e vedi il prossimo impegno.")
+        .supportedFamilies([
+            .systemSmall, .systemMedium, .systemLarge,
+            .accessoryCircular, .accessoryRectangular, .accessoryInline
+        ])
     }
 }
 
@@ -346,26 +364,23 @@ struct TapMemoWidget: Widget {
 #Preview(as: .systemSmall) {
     TapMemoWidget()
 } timeline: {
-    TapMemoEntry(date: .now, memos: [
-        MemoItem(originalText: "test", normalizedTitle: "Prendere Pietro", dueAt: Date())
-    ])
+    TapMemoEntry(date: .now, memos: TapMemoWidgetProvider.sampleMemos)
 }
 
 #Preview(as: .systemMedium) {
     TapMemoWidget()
 } timeline: {
-    TapMemoEntry(date: .now, memos: [
-        MemoItem(originalText: "test", normalizedTitle: "Prendere Pietro", dueAt: Date()),
-        MemoItem(originalText: "test", normalizedTitle: "Fare la spesa", dueAt: Date())
-    ])
+    TapMemoEntry(date: .now, memos: TapMemoWidgetProvider.sampleMemos)
 }
 
 #Preview(as: .systemLarge) {
     TapMemoWidget()
 } timeline: {
-    TapMemoEntry(date: .now, memos: [
-        MemoItem(originalText: "test", normalizedTitle: "Prendere Pietro", dueAt: Date()),
-        MemoItem(originalText: "test", normalizedTitle: "Fare la spesa", dueAt: Date()),
-        MemoItem(originalText: "test", normalizedTitle: "Dentista", dueAt: Date())
-    ])
+    TapMemoEntry(date: .now, memos: TapMemoWidgetProvider.sampleMemos)
+}
+
+#Preview(as: .accessoryRectangular) {
+    TapMemoWidget()
+} timeline: {
+    TapMemoEntry(date: .now, memos: TapMemoWidgetProvider.sampleMemos)
 }

@@ -10,39 +10,27 @@ import SwiftData
 
 @main
 struct TapMemoApp: App {
-    // ModelContainer con App Group per condivisione con widget
+    // ModelContainer sul gruppo condiviso, così il widget legge gli stessi dati.
     static let sharedModelContainer: ModelContainer = {
-        let appGroupID = "group.com.smartapibox.tapmemo"
-        
-        // Prova ad usare App Group per condivisione con widget
-        if let groupURL = FileManager.default.containerURL(
-            forSecurityApplicationGroupIdentifier: appGroupID
-        ) {
-            let storeURL = groupURL.appendingPathComponent("TapMemo.sqlite")
+        if let storeURL = TapMemoSharedStore.storeURL {
             let config = ModelConfiguration(url: storeURL)
-            
             do {
-                let container = try ModelContainer(for: MemoItem.self, configurations: config)
-                print("✅ App Group configurato correttamente!")
-                print("✅ Database condiviso: \(storeURL.path)")
-                return container
+                return try ModelContainer(for: MemoItem.self, configurations: config)
             } catch {
-                print("⚠️ Schema incompatibile: \(error)")
+                print("⚠️ Store condiviso non apribile: \(error)")
             }
         } else {
-            print("⚠️ App Group '\(appGroupID)' non trovato!")
-            print("⚠️ Verifica Signing & Capabilities → App Groups")
+            print("⚠️ App Group '\(TapMemoSharedStore.appGroupID)' non trovato — Signing & Capabilities → App Groups")
         }
-        
-        // Fallback: usa container di default (senza widget sharing)
-        print("⚠️ Usando container locale (widget non vedrà i dati)")
+
+        // Fallback locale: l'app funziona, il widget non vedrà i dati.
         do {
             return try ModelContainer(for: MemoItem.self)
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
         }
     }()
-    
+
     var body: some Scene {
         WindowGroup {
             ContentView()

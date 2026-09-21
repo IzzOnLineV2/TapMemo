@@ -104,6 +104,27 @@ actor EventKitService {
         try store.remove(reminder, commit: true)
     }
 
+    // MARK: - Update
+
+    /// «Cambia ora» nel foglio di conferma (3e): sposta l'evento già creato
+    /// invece di eliminarlo e ricrearlo, così l'identificatore resta valido.
+    func updateEvent(identifier: String, date: Date, isAllDay: Bool = false) async throws {
+        guard let event = store.event(withIdentifier: identifier) else {
+            throw NSError(domain: "TapMemo", code: 3,
+                          userInfo: [NSLocalizedDescriptionKey: "Event not found"])
+        }
+
+        event.startDate = date
+        event.isAllDay = isAllDay
+        if isAllDay {
+            event.endDate = date
+        } else {
+            event.endDate = Calendar.current.date(byAdding: .minute, value: 30, to: date) ?? date.addingTimeInterval(1800)
+        }
+
+        try store.save(event, span: .thisEvent, commit: true)
+    }
+
     // MARK: - Check Existence
 
     func eventExists(identifier: String) -> Bool {

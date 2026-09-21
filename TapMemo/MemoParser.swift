@@ -340,3 +340,42 @@ private extension String {
         return self.prefix(1).uppercased() + self.dropFirst()
     }
 }
+
+
+// MARK: - Evidenziazione della parte temporale
+
+extension MemoParser {
+
+    /// Gli stessi marcatori che `extractTitle` usa per tagliare via la parte
+    /// temporale dal titolo.
+    static let temporalMarkers: [String] = [
+        " oggi", " domani", " dopodomani",
+        " lunedì", " martedì", " mercoledì", " giovedì", " venerdì", " sabato", " domenica",
+        " alle ", " ore ", " all'", " a mezzogiorno", " a mezzanotte", " stasera", " stamattina"
+    ]
+
+    /// La porzione di trascrizione che il parser ha letto come data/ora, dal primo
+    /// marcatore alla fine della frase.
+    ///
+    /// Serve alla card 3d: evidenziare la parte temporale riconosciuta insegna il
+    /// parser senza bisogno di un tutorial.
+    static func temporalHighlight(in text: String) -> Range<String.Index>? {
+        var earliest: String.Index?
+
+        for marker in temporalMarkers {
+            guard let found = text.range(of: marker, options: [.caseInsensitive, .diacriticInsensitive]) else { continue }
+            if earliest == nil || found.lowerBound < earliest! {
+                earliest = found.lowerBound
+            }
+        }
+
+        guard var start = earliest else { return nil }
+        // I marcatori iniziano con lo spazio di separazione: non va evidenziato.
+        if text[start].isWhitespace {
+            start = text.index(after: start)
+        }
+        guard start < text.endIndex else { return nil }
+
+        return start..<text.endIndex
+    }
+}

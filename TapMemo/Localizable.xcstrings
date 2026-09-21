@@ -1,204 +1,658 @@
 {
-  "sourceLanguage" : "it",
-  "strings" : {
-    "✅ Aggiunto a Promemoria" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "✅ Added to Reminders"
+  "sourceLanguage": "it",
+  "strings": {
+    "%lld memo": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld memo"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld memos"
+                }
+              }
+            }
           }
         }
       }
     },
-    "✅ Aggiunto al Calendario" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "✅ Added to Calendar"
+    "+ Promemoria": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+ Reminder"
           }
         }
       }
     },
-    "✅ Condiviso" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "✅ Shared"
+    "Aggiungi a Promemoria": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add to Reminders"
           }
         }
       }
     },
-    "🎤 \"%@\"" : {
-
-    },
-    "Calendario" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calendar"
+    "Aggiungi al Calendario": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add to Calendar"
           }
         }
       }
     },
-    "Condividi" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Share"
+    "Annulla": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Undo"
           }
         }
       }
     },
-    "Elimina" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete"
+    "Annulla la registrazione": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel recording"
           }
         }
       }
     },
-    "Errore" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Error"
+    "Apri Impostazioni": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Settings"
           }
         }
       }
     },
-    "EVENT" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "EVENT"
+    "Calendario": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calendar"
           }
         }
       }
     },
-    "In Calendario" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In Calendar"
+    "Calendario negato": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calendar access denied"
           }
         }
       }
     },
-    "In Promemoria" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In Reminders"
+    "Cambia ora": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change time"
           }
         }
       }
     },
-    "Nessun memo" : {
-
-    },
-    "Nessun memo ancora" : {
-
-    },
-    "NOTE" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "NOTE"
+    "Capisce anche": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It also understands"
           }
         }
       }
     },
-    "OK" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
+    "Condividi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share"
           }
         }
       }
     },
-    "Promemoria" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reminders"
+    "Dettatura non autorizzata": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dictation not allowed"
           }
         }
       }
     },
-    "Recenti" : {
-
-    },
-    "Registra" : {
-
-    },
-    "REMINDER" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "REMINDER"
+    "Dì quando…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Say when…"
           }
         }
       }
     },
-    "Solo in TapMemo" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Only in TapMemo"
+    "Elimina": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
           }
         }
       }
     },
-    "Sto ascoltando..." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Listening..."
+    "Eliminare il memo e il suo evento?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete the memo and its event?"
           }
         }
       }
     },
-    "Tap per registrare" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tap to record"
+    "Evento creato in Calendario": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Event created in Calendar"
           }
         }
       }
     },
-    "TapMemo" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "TapMemo"
+    "Evento non creato": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Event not created"
           }
         }
       }
     },
-    "Visualizza i tuoi memo recenti e registra rapidamente nuovi promemoria vocali." : {
-
+    "Fatto": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        }
+      }
+    },
+    "Ferma la registrazione": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop recording"
+          }
+        }
+      }
+    },
+    "Ho capito": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Got it"
+          }
+        }
+      }
+    },
+    "Il memo è salvato in TapMemo, ma l'evento non è stato creato. (%@)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The memo is saved in TapMemo, but the event was not created. (%@)"
+          }
+        }
+      }
+    },
+    "Il memo è salvato in TapMemo; il promemoria no. Autorizza Promemoria per completare l'operazione.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The memo is saved in TapMemo; the reminder is not. Allow Reminders to finish the job."
+          }
+        }
+      }
+    },
+    "Il memo è salvato in TapMemo; l'evento no. Autorizza il calendario per far creare gli eventi a TapMemo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The memo is saved in TapMemo; the event is not. Allow calendar access so TapMemo can create events."
+          }
+        }
+      }
+    },
+    "Il microfono è disattivato": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The microphone is off"
+          }
+        }
+      }
+    },
+    "In Calendario": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Calendar"
+          }
+        }
+      }
+    },
+    "In Promemoria": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Reminders"
+          }
+        }
+      }
+    },
+    "L'evento collegato verrà rimosso anche dal Calendario.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The linked event will be removed from Calendar too."
+          }
+        }
+      }
+    },
+    "Mantieni": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep"
+          }
+        }
+      }
+    },
+    "Memo salvato in TapMemo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Memo saved in TapMemo"
+          }
+        }
+      }
+    },
+    "Metti in Calendario": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Put it in Calendar"
+          }
+        }
+      }
+    },
+    "Non ho capito": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I didn't catch that"
+          }
+        }
+      }
+    },
+    "Non ho sentito niente di comprensibile. Nessun memo è stato creato: tocca e parla di nuovo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I heard nothing I could make sense of. No memo was created: tap and speak again."
+          }
+        }
+      }
+    },
+    "Non ho sentito una data. Il memo è salvato: scorri per metterlo in Calendario.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I didn't hear a date. The memo is saved: swipe to put it in Calendar."
+          }
+        }
+      }
+    },
+    "Non ora": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not now"
+          }
+        }
+      }
+    },
+    "Non riesco ad avviare la registrazione. Riprova fra un momento. (%@)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I can't start recording. Try again in a moment. (%@)"
+          }
+        }
+      }
+    },
+    "Nuova ora": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New time"
+          }
+        }
+      }
+    },
+    "Parla, ed è in calendario.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speak, and it's on your calendar."
+          }
+        }
+      }
+    },
+    "Posso registrare, ma non trascrivere. La trascrizione avviene sul telefono: attivala per creare i memo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I can record, but not transcribe. Transcription happens on your phone: turn it on to create memos."
+          }
+        }
+      }
+    },
+    "Promemoria": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminders"
+          }
+        }
+      }
+    },
+    "Promemoria negati": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminders access denied"
+          }
+        }
+      }
+    },
+    "Prova a dire": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try saying"
+          }
+        }
+      }
+    },
+    "Registra un memo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Record a memo"
+          }
+        }
+      }
+    },
+    "Registrazione non disponibile": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recording unavailable"
+          }
+        }
+      }
+    },
+    "Senza microfono TapMemo non può ascoltarti. L'audio resta sul telefono: non viene registrato né inviato da nessuna parte.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Without the microphone TapMemo can't hear you. Audio stays on your phone: it is never stored or sent anywhere."
+          }
+        }
+      }
+    },
+    "Si chiude da sé fra %lld s": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Closes by itself in %lld s"
+          }
+        }
+      }
+    },
+    "Solo in TapMemo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only in TapMemo"
+          }
+        }
+      }
+    },
+    "Sto ascoltando": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listening"
+          }
+        }
+      }
+    },
+    "Sto capendo quando…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Working out when…"
+          }
+        }
+      }
+    },
+    "Sto creando il memo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Creating the memo"
+          }
+        }
+      }
+    },
+    "TapMemo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TapMemo"
+          }
+        }
+      }
+    },
+    "Tocca due volte e parla": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double-tap and speak"
+          }
+        }
+      }
+    },
+    "Tocca due volte per finire": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double-tap to finish"
+          }
+        }
+      }
+    },
+    "Tocca e parla": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap and speak"
+          }
+        }
+      }
+    },
+    "Tocca il cerchio e dì quando. TapMemo scrive il titolo e crea l'evento al posto tuo.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap the circle and say when. TapMemo writes the title and creates the event for you."
+          }
+        }
+      }
+    },
+    "Tocca per finire · scorri giù per annullare": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap to finish · swipe down to cancel"
+          }
+        }
+      }
+    },
+    "Un attimo…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One moment…"
+          }
+        }
+      }
+    },
+    "domani, %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tomorrow, %@"
+          }
+        }
+      }
+    },
+    "domani, %@ · %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tomorrow, %@ · %@"
+          }
+        }
+      }
+    },
+    "dopodomani, sabato 25, stasera, a mezzogiorno.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dopodomani, sabato 25, stasera, a mezzogiorno."
+          }
+        }
+      }
+    },
+    "oggi, %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "today, %@"
+          }
+        }
+      }
+    },
+    "oggi, %@ · %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "today, %@ · %@"
+          }
+        }
+      }
+    },
+    "«%@»": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@”"
+          }
+        }
+      }
+    },
+    "«ricordami la spesa domani alle 3»": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«ricordami la spesa domani alle 3»"
+          }
+        }
+      }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

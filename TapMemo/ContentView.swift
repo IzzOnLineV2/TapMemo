@@ -4,379 +4,232 @@
 //
 //  Created by Stefania Izzo on 03/03/26.
 //
+//  Parte 3 del redesign — una sola schermata come prima, ma con il pulsante in
+//  basso (raggiungibile con il pollice, in auto, con una mano) e la lista come
+//  pila di card invece di List + Divider.
+//
 
 import SwiftUI
 import SwiftData
+import UIKit
 
 struct ContentView: View {
-    
+
     @Environment(\.modelContext) private var context
+    @Environment(\.scenePhase) private var scenePhase
+
     @Query(sort: \MemoItem.createdAt, order: .reverse)
     private var memos: [MemoItem]
-    
-    @StateObject private var voiceManager = VoiceManager()
-    @StateObject private var memoService = MemoCreationService()
-    
-    @State private var successMessage: String?
-    @State private var showSuccessBanner = false
-    @Environment(\.scenePhase) private var scenePhase
-    
+
+    @StateObject private var voice = VoiceManager()
+    @StateObject private var service = MemoCreationService()
+
+    /// Un solo canale per i guasti, da qualunque parte arrivino.
+    private var activeIssue: AppIssue? { voice.issue ?? service.issue }
+
     var body: some View {
-        NavigationStack {
+        ZStack {
+            TMColor.canvas.ignoresSafeArea()
+
             VStack(spacing: 0) {
-                
-                // Recording Button
-                VStack(spacing: 12) {
-                    Button(action: handleRecordTap) {
-                        ZStack {
-                            Circle()
-                                .fill(voiceManager.isRecording ? Color.red : Color.blue)
-                                .frame(width: 100, height: 100)
-                                .shadow(color: voiceManager.isRecording ? .red.opacity(0.4) : .blue.opacity(0.3), 
-                                       radius: voiceManager.isRecording ? 20 : 10)
-                                .scaleEffect(voiceManager.isRecording ? 1.1 : 1.0)
-                                .animation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true), 
-                                          value: voiceManager.isRecording)
-                            
-                            Image(systemName: voiceManager.isRecording ? "stop.fill" : "mic.fill")
-                                .font(.largeTitle)
-                                .foregroundColor(.white)
-                        }
-                    }
-                    .buttonStyle(.plain)
-                    
-                    Group {
-                        if voiceManager.isRecording {
-                            Text("Sto ascoltando...")
-                        } else {
-                            Text("Tap per registrare")
-                        }
-                    }
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    
-                    if memoService.isProcessing {
-                        ProgressView()
-                            .padding(.top, 4)
-                    }
+                if !isEmptyState { header }
+
+                if let issue = activeIssue {
+                    IssueCard(issue: issue, onDismiss: dismissIssue)
+                        .padding(.horizontal, TMSpace.screenMargin)
+                        .padding(.bottom, TMSpace.m)
+                        .transition(.move(edge: .top).combined(with: .opacity))
                 }
-                .padding(.vertical, 24)
-                
-                Divider()
-                
-                // Memo List
-                List {
-                    ForEach(memos) { memo in
-                        MemoRow(memo: memo)
-                            .swipeActions(edge: .trailing) {
-                                
-                                // Mostra azioni in base alla destinazione corrente
-                                
-                                // Calendario - solo se non è già in Calendario
-                                if !memo.isInCalendar {
-                                    Button {
-                                        Task {
-                                            await saveToCalendar(memo)
-                                        }
-                                    } label: {
-                                        Label("Calendario", systemImage: "calendar.badge.plus")
-                                    }
-                                    .tint(.blue)
-                                }
-                                
-                                // Promemoria - solo se non è già in Promemoria
-                                if !memo.isInReminder {
-                                    Button {
-                                        Task {
-                                            await memoService.saveAsReminder(memo)
-                                            if memoService.lastError == nil {
-                                                showFeedback(String(localized: "✅ Aggiunto a Promemoria"))
-                                            }
-                                        }
-                                    } label: {
-                                        Label("Promemoria", systemImage: "checkmark.circle")
-                                    }
-                                    .tint(.orange)
-                                }
-                                
-                                // Condividi - sempre disponibile
-                                Button {
-                                    shareMemo(memo)
-                                } label: {
-                                    Label("Condividi", systemImage: "square.and.arrow.up")
-                                }
-                                .tint(.purple)
-                                
-                                // Elimina - sempre disponibile
-                                Button(role: .destructive) {
-                                    Task {
-                                        await memoService.deleteMemo(memo, context: context)
-                                    }
-                                } label: {
-                                    Label("Elimina", systemImage: "trash")
-                                }
-                            }
-                    }
-                    .onDelete(perform: deleteMemos)
-                }
-                .listStyle(.plain)
+
+                content
+
+                RecordDock(isRecording: voice.isRecording,
+                           isEnabled: !service.isProcessing,
+                           invitesTap: showsInvitation,
+                           action: handleRecordTap)
             }
-            .navigationTitle("TapMemo")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                EditButton()
-            }
-        }
-        .onAppear {
-            voiceManager.requestPermissions()
-            Task {
-                await memoService.syncWithEventKit(memos: memos, context: context)
-            }
-        }
-        .onChange(of: scenePhase) { _, newPhase in
-            if newPhase == .active {
-                Task {
-                    await memoService.syncWithEventKit(memos: memos, context: context)
-                }
-            }
-        }
-        .onOpenURL { url in
-            if url.host == "record" {
-                startRecording()
-            }
-        }
-        .overlay(alignment: .top) {
-            if showSuccessBanner, let message = successMessage {
-                SuccessBanner(message: message)
-                    .transition(.move(edge: .top).combined(with: .opacity))
+
+            if voice.isRecording {
+                RecordingOverlay(level: voice.level,
+                                 partialText: voice.partialText,
+                                 onFinish: voice.stopRecording,
+                                 onCancel: voice.cancelRecording)
+                    .transition(.opacity)
                     .zIndex(1)
             }
         }
-        .alert("Errore", isPresented: Binding(
-            get: { memoService.lastError != nil },
-            set: { if !$0 { memoService.lastError = nil } }
-        )) {
-            Button("OK") { memoService.lastError = nil }
-        } message: {
-            if let error = memoService.lastError {
-                Text(error)
-            }
+        .animation(TMMotion.state, value: voice.isRecording)
+        .animation(TMMotion.state, value: activeIssue)
+        .sheet(item: $service.confirmation) { confirmation in
+            ConfirmationSheet(
+                confirmation: confirmation,
+                onUndo: { Task { await service.undo(confirmation, context: context) } },
+                onChangeTime: { date in Task { await service.changeTime(of: confirmation.memo, to: date) } },
+                onAddToCalendar: {
+                    Task {
+                        await service.saveAsCalendarEvent(confirmation.memo,
+                                                          date: confirmation.memo.dueAt ?? Self.defaultDate)
+                        service.confirmation = nil
+                    }
+                },
+                onDone: { service.confirmation = nil }
+            )
+        }
+        .task {
+            await voice.requestPermissions()
+            await service.syncWithEventKit(memos: memos, context: context)
+            consumePendingRecordRequest()
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            guard newPhase == .active else { return }
+            Task { await service.syncWithEventKit(memos: memos, context: context) }
+            consumePendingRecordRequest()
+        }
+        .onOpenURL { url in
+            if url.host == "record" { startRecording() }
         }
     }
-    
-    // MARK: - Actions
-    
+
+    // MARK: - Pezzi
+
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text("TapMemo")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+
+            Group {
+                if service.isProcessing {
+                    Text("Sto capendo quando…")
+                        .foregroundStyle(TMColor.accent)
+                } else {
+                    Text("\(memos.count) memo")
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .font(.subheadline)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, TMSpace.screenMargin)
+        .padding(.top, TMSpace.s)
+        .padding(.bottom, TMSpace.l)
+        .accessibilityElement(children: .combine)
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if isEmptyState {
+            ScrollView { EmptyStateView() }
+                .scrollBounceBehavior(.basedOnSize)
+        } else {
+            List {
+                if let transcript = service.processingTranscript {
+                    ProcessingCard(transcript: transcript)
+                        .modifier(CardRow())
+                }
+
+                ForEach(memos) { memo in
+                    MemoCard(memo: memo)
+                        .modifier(CardRow())
+                        .memoActions(for: memo, actions: actions(for: memo))
+                }
+            }
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .scrollDismissesKeyboard(.immediately)
+        }
+    }
+
+    /// Primo avvio: la schermata è tutta per la promessa (3b), niente intestazione.
+    private var isEmptyState: Bool {
+        memos.isEmpty && !service.isProcessing
+    }
+
+    private var showsInvitation: Bool {
+        isEmptyState && !voice.isRecording
+    }
+
+    // MARK: - Azioni
+
+    private func actions(for memo: MemoItem) -> MemoActions {
+        MemoActions(
+            addToCalendar: {
+                Task { await service.saveAsCalendarEvent(memo, date: memo.dueAt ?? Self.defaultDate) }
+            },
+            addToReminder: {
+                Task { await service.saveAsReminder(memo) }
+            },
+            share: { share(memo) },
+            delete: {
+                Task { await service.deleteMemo(memo, context: context) }
+            }
+        )
+    }
+
     private func handleRecordTap() {
-        Haptics.tap()
-        
-        if voiceManager.isRecording {
-            voiceManager.stopRecording()
+        if voice.isRecording {
+            voice.stopRecording()
         } else {
             startRecording()
         }
     }
-    
+
     private func startRecording() {
-        do {
-            try voiceManager.startRecording { text in
-                Haptics.success()
-                Task {
-                    await memoService.handleNewTranscript(text, context: context)
-                }
-            }
-        } catch {
-            Haptics.error()
-            print("❌ Recording error: \(error)")
-        }
-    }
-    
-    private func saveToCalendar(_ memo: MemoItem) async {
-        // Se non ha una data, usa domani alle 9:00 come default
-        let dueDate = memo.dueAt ?? Calendar.current.date(byAdding: .day, value: 1, to: Date())!
-        
-        await memoService.saveAsCalendarEvent(memo, date: dueDate)
-        
-        if memoService.lastError == nil {
-            showFeedback(String(localized: "✅ Aggiunto al Calendario"))
-        }
-    }
-    
-    private func deleteMemos(at offsets: IndexSet) {
-        for index in offsets {
-            let memo = memos[index]
-            Task {
-                await memoService.deleteMemo(memo, context: context)
-            }
+        voice.startRecording { text in
+            Task { await service.handleNewTranscript(text, context: context) }
         }
     }
 
-    private func shareMemo(_ memo: MemoItem) {
-        let text = "\(memo.normalizedTitle)\n\n🎤 \(memo.originalText)"
-        let av = UIActivityViewController(
-            activityItems: [text],
-            applicationActivities: nil
-        )
-        
-        av.completionWithItemsHandler = { _, completed, _, _ in
-            if completed {
-                memo.isShared = true
-                Haptics.success()
-                showFeedback(String(localized: "✅ Condiviso"))
-            }
-        }
-        
-        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let root = scene.windows.first?.rootViewController {
-            root.present(av, animated: true)
-        }
+    private func dismissIssue() {
+        voice.issue = nil
+        service.issue = nil
     }
-    
-    private func showFeedback(_ message: String) {
-        successMessage = message
-        withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
-            showSuccessBanner = true
+
+    /// Il controllo di Control Center / Action Button lascia una richiesta nel
+    /// gruppo condiviso: l'app la raccoglie appena torna in primo piano.
+    private func consumePendingRecordRequest() {
+        guard let defaults = UserDefaults(suiteName: TapMemoSharedStore.appGroupID),
+              defaults.bool(forKey: TapMemoSharedStore.pendingRecordKey) else { return }
+
+        defaults.set(false, forKey: TapMemoSharedStore.pendingRecordKey)
+        startRecording()
+    }
+
+    private func share(_ memo: MemoItem) {
+        let text = "\(memo.normalizedTitle)\n\n\(memo.originalText)"
+        let controller = UIActivityViewController(activityItems: [text], applicationActivities: nil)
+
+        controller.completionWithItemsHandler = { _, completed, _, _ in
+            guard completed else { return }
+            memo.isShared = true
+            Haptics.success()
         }
-        
-        Task {
-            try? await Task.sleep(for: .seconds(2.5))
-            withAnimation {
-                showSuccessBanner = false
-            }
-            try? await Task.sleep(for: .seconds(0.3))
-            successMessage = nil
-        }
+
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let root = scene.windows.first(where: { $0.isKeyWindow })?.rootViewController else { return }
+        root.present(controller, animated: true)
+    }
+
+    /// Un memo senza data messo in Calendario finisce domani alle 9:00.
+    private static var defaultDate: Date {
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date()
+        return Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrow) ?? tomorrow
     }
 }
 
-// MARK: - Memo Row
+// MARK: - Riga senza cromature di List
 
-struct MemoRow: View {
-    let memo: MemoItem
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(memo.normalizedTitle)
-                    .font(.headline)
-
-                Spacer()
-
-                // Badges
-                HStack(spacing: 4) {
-                    if memo.isInCalendar {
-                        BadgeLabel("EVENT", color: .blue)
-                    }
-                    if memo.isInReminder {
-                        BadgeLabel("REMINDER", color: .orange)
-                    }
-                    if memo.isLocal {
-                        BadgeLabel("NOTE", color: .gray)
-                    }
-                }
-            }
-
-            // Due date
-            if let dueAt = memo.dueAt {
-                HStack(spacing: 4) {
-                    Image(systemName: "clock")
-                        .font(.caption)
-                    Text(dueAt.formatted(date: .abbreviated, time: .shortened))
-                        .font(.caption)
-                }
-                .foregroundColor(.secondary)
-            }
-
-            // EventKit status
-            VStack(alignment: .leading, spacing: 2) {
-                if memo.isInCalendar {
-                    StatusLabel(icon: "checkmark.circle.fill", text: "In Calendario", color: .green)
-                }
-                if memo.isInReminder {
-                    StatusLabel(icon: "checkmark.circle.fill", text: "In Promemoria", color: .green)
-                }
-                if memo.isLocal {
-                    StatusLabel(icon: "circle", text: "Solo in TapMemo", color: .secondary)
-                }
-            }
-
-            // Original transcription (subtle)
-            if memo.originalText != memo.normalizedTitle.lowercased() {
-                Text("🎤 \"\(memo.originalText)\"")
-                    .font(.caption2)
-                    .foregroundColor(.secondary.opacity(0.7))
-                    .italic()
-                    .padding(.top, 4)
-            }
-        }
-        .padding(.vertical, 4)
-    }
-}
-
-// MARK: - Helper Views
-
-private struct BadgeLabel: View {
-    let text: LocalizedStringKey
-    let color: Color
-
-    init(_ text: LocalizedStringKey, color: Color) {
-        self.text = text
-        self.color = color
-    }
-
-    var body: some View {
-        Text(text)
-            .font(.caption2)
-            .fontWeight(.semibold)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(color.opacity(0.2))
-            .foregroundColor(color)
-            .cornerRadius(6)
-    }
-}
-
-private struct StatusLabel: View {
-    let icon: String
-    let text: LocalizedStringKey
-    let color: Color
-
-    var body: some View {
-        HStack(spacing: 4) {
-            Image(systemName: icon)
-                .font(.caption)
-                .foregroundColor(color)
-            Text(text)
-                .font(.caption2)
-                .foregroundColor(.secondary)
-        }
-    }
-}
-
-// MARK: - Success Banner
-
-struct SuccessBanner: View {
-    let message: String
-    
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "checkmark.circle.fill")
-                .font(.title3)
-                .foregroundColor(.green)
-            
-            Text(message)
-                .font(.subheadline)
-                .fontWeight(.medium)
-            
-            Spacer()
-        }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(.ultraThinMaterial)
-                .shadow(color: .black.opacity(0.1), radius: 8, y: 4)
-        )
-        .padding(.horizontal)
-        .padding(.top, 8)
+/// Il List resta (serve per le swipe action), ma non si vede: niente separatori,
+/// niente fondo di riga, margini dai token.
+private struct CardRow: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets(top: TMSpace.rowGap / 2,
+                                      leading: TMSpace.screenMargin,
+                                      bottom: TMSpace.rowGap / 2,
+                                      trailing: TMSpace.screenMargin))
     }
 }
 

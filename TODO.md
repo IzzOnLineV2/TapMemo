@@ -68,10 +68,22 @@ salvato i dati. L'avviso comparirà al massimo ancora una volta.
 
 **Stato:** da decidere · aperto il 21/09/2026
 
-`VoiceManager.swift` imposta `requiresOnDeviceRecognition = false`, quindi l'audio viene
-inviato ad Apple per la trascrizione — e iOS lo dice all'utente, letteralmente, nella
-finestra di permesso: «I dati vocali di quest'app verranno inviati ad Apple per
-l'elaborazione».
+`requiresOnDeviceRecognition = false` **non** significa «manda ai server»: significa «non
+pretendere il locale, sceglie il sistema». Verificato sul campo il 22/09/2026: la 1.1, che
+ha `false`, trascrive perfettamente in modalità aereo — segno che iOS usa il modello sul
+dispositivo quando la rete non c'è.
+
+La differenza fra `false` e `true` sta quindi **solo nel caso con connessione attiva**:
+
+| | `false` (1.1) | `true` (1.1.1) |
+|---|---|---|
+| Senza rete | sul dispositivo | sul dispositivo |
+| Con rete | il sistema può usare i server di Apple | non li usa mai |
+
+Indipendentemente dall'impostazione, iOS mostra comunque la finestra «I dati vocali di
+quest'app verranno inviati ad Apple per l'elaborazione» al momento dell'autorizzazione:
+quel testo è di sistema e compare prima che qualunque richiesta venga configurata. Nessuna
+modifica al codice lo toglie.
 
 È in tensione con il posizionamento dell'app. L'immagine 6 della scheda App Store dice
 «Resta sul telefono», e la descrizione italiana precedente affermava che la trascrizione
@@ -87,10 +99,13 @@ request.requiresOnDeviceRecognition = speechRecognizer?.supportsOnDeviceRecognit
 Condizionarla a `supportsOnDeviceRecognition` è necessario: se il modello linguistico non è
 scaricato, imporre il riconoscimento locale fa fallire la trascrizione.
 
-**Il compromesso da valutare:** il riconoscimento sul dispositivo è più chiuso ma
-tipicamente meno accurato di quello sui server, e l'accuratezza qui è tutto — un titolo
-sbagliato o un'ora sbagliata rendono l'app inutile. Vale la pena provarlo sul telefono con
-frasi vere, in entrambe le lingue, prima di decidere.
+**Il compromesso da valutare:** con `true` si rinuncia al riconoscimento sui server, che
+Apple usa quando può perché di solito è più accurato — e qui l'accuratezza è tutto, un'ora
+sbagliata rende l'app inutile.
+
+**Come provarlo davvero:** non in modalità aereo, dove le due versioni si comportano
+identiche. Con la **rete accesa**, dettare le stesse frasi su entrambe le build e
+confrontare gli errori, in italiano e in inglese, su frasi con ore e date precise.
 
 Se si adotta, la descrizione può tornare a dire che tutto resta sul telefono, ed è l'unica
 condizione in cui può dirlo.

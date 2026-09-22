@@ -80,10 +80,12 @@ Niente «tapmemo» né parole del sottotitolo: App Store le indicizza a parte.
 
 ## Cosa è cambiato rispetto alla versione precedente, e perché
 
-- **Tolto «direttamente sul dispositivo» dalla trascrizione.** Con
-  `requiresOnDeviceRecognition = false` l'audio va ai server di Apple, e la finestra di
-  permesso di iOS lo dice all'utente parola per parola. Affermare il contrario nella scheda
-  è una contraddizione che l'utente incontra al primo tap. Vedi `TODO.md`.
+- **Tolto «direttamente sul dispositivo» dalla trascrizione.** Non perché sia sempre falso —
+  senza rete la trascrizione è locale davvero — ma perché con la connessione attiva il
+  sistema può usare i server di Apple, e la finestra di permesso di iOS dice all'utente
+  proprio questo. Una frase assoluta nella scheda verrebbe smentita al primo tap. Anche con
+  `requiresOnDeviceRecognition = true` quella finestra resta: è testo di sistema. Vedi
+  `TODO.md`.
 - **Tolto «Tutto sul dispositivo» come titolo di sezione**, sostituito da «Nessun account,
   nessun server», che è vero e altrettanto forte: parla dell'assenza di *nostri* server.
 - **Tolto «Più pratico di dettare a Siri».** Il confronto con una funzione di sistema di

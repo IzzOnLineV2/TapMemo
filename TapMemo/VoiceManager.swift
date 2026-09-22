@@ -97,7 +97,12 @@ final class VoiceManager: NSObject, ObservableObject {
             let request = SFSpeechAudioBufferRecognitionRequest()
             // 3c: la trascrizione si vede mentre l'utente parla.
             request.shouldReportPartialResults = true
-            request.requiresOnDeviceRecognition = false
+
+            // Trascrivi sul telefono quando il modello linguistico c'è: è ciò che
+            // l'app promette. Imporlo quando non è disponibile farebbe fallire la
+            // trascrizione, quindi si ricade sui server di Apple solo se serve.
+            request.requiresOnDeviceRecognition = speechRecognizer?.supportsOnDeviceRecognition ?? false
+
             recognitionRequest = request
 
             recognitionTask = speechRecognizer?.recognitionTask(with: request) { [weak self] result, error in

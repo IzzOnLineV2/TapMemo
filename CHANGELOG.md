@@ -2,20 +2,6 @@
 
 Le note di rilascio così come vanno nella scheda App Store, nelle due lingue.
 
-## 1.1.1 — trascrizione sul telefono
-
-*In prova. Da rilasciare solo se l'accuratezza regge.*
-
-### it-IT
-
-**La trascrizione avviene sul tuo iPhone.** Quando il modello linguistico è disponibile sul
-dispositivo, TapMemo non manda più l'audio ai server di Apple per trascriverlo.
-
-### en-US
-
-**Transcription happens on your iPhone.** When the language model is available on the
-device, TapMemo no longer sends audio to Apple's servers to transcribe it.
-
 ## 1.1 — redesign e inglese
 
 ### it-IT

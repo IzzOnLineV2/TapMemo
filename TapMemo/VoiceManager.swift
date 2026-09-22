@@ -98,10 +98,12 @@ final class VoiceManager: NSObject, ObservableObject {
             // 3c: la trascrizione si vede mentre l'utente parla.
             request.shouldReportPartialResults = true
 
-            // Trascrivi sul telefono quando il modello linguistico c'è: è ciò che
-            // l'app promette. Imporlo quando non è disponibile farebbe fallire la
-            // trascrizione, quindi si ricade sui server di Apple solo se serve.
-            request.requiresOnDeviceRecognition = speechRecognizer?.supportsOnDeviceRecognition ?? false
+            // La scelta del metodo resta a Speech, deliberatamente: senza rete
+            // trascrive comunque sul dispositivo, con la rete può usare i server di
+            // Apple, che sono più accurati. Forzare `true` garantirebbe che l'audio
+            // non esca mai, al prezzo dell'accuratezza — e qui un'ora sbagliata rende
+            // il memo inutile. Valutato e scartato il 22/09/2026, vedi TODO.md.
+            request.requiresOnDeviceRecognition = false
 
             recognitionRequest = request
 
